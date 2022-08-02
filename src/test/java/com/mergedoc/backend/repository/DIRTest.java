@@ -4,6 +4,7 @@ import com.mergedoc.backend.dir.entity.DIR;
 import com.mergedoc.backend.dir.entity.PageInDIR;
 import com.mergedoc.backend.dir.entity.UnitInDIR;
 import com.mergedoc.backend.dir.repository.DIRRepository;
+import com.mergedoc.backend.exceptions.NotFoundException;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,7 +39,8 @@ public class DIRTest {
 
         String createName = "testDIR";
 
-        DIR parentDIR = dirRepository.findDIRByPathAndName(rootPath, rootName);
+        DIR parentDIR = dirRepository.findDIRByPathAndName(rootPath, rootName)
+                .orElseThrow(() -> new NotFoundException("디렉토리를 찾을 수 없습니다."));
 
         DIR createdDIR = DIR.builder().parent(parentDIR).build();
         createdDIR.setPath(rootPath+rootName+"/");
@@ -52,7 +54,8 @@ public class DIRTest {
 
     @Test
     public void findUnit() {
-        DIR parentDIR = dirRepository.findDIRByPathAndName(rootPath, rootName);
+        DIR parentDIR = dirRepository.findDIRByPathAndName(rootPath, rootName)
+                .orElseThrow(() -> new NotFoundException("디렉토리를 찾을 수 없습니다."));
 
         String childPath = rootPath+rootName+"/";
 
@@ -66,14 +69,16 @@ public class DIRTest {
 
         dirRepository.saveUnitInDIR(createUnitInDIR);
 
-        UnitInDIR findUnit = dirRepository.findUnitByPathAndName(childPath, "testUnit");
+        UnitInDIR findUnit = dirRepository.findUnitByPathAndName(childPath, "testUnit")
+                .orElseThrow(() -> new NotFoundException("유닛을 찾을 수 없습니다."));
 
         assertThat(findUnit).isEqualTo(createUnitInDIR);
     }
 
     @Test
     public void findPage() {
-        DIR parentDIR = dirRepository.findDIRByPathAndName(rootPath, rootName);
+        DIR parentDIR = dirRepository.findDIRByPathAndName(rootPath, rootName)
+                .orElseThrow(() -> new NotFoundException("디렉토리를 찾을 수 없습니다."));
 
         String childPath = rootPath+rootName+"/";
 
@@ -87,14 +92,16 @@ public class DIRTest {
 
         dirRepository.savePageInDIR(createPageInDIR);
 
-        PageInDIR findUnit = dirRepository.findPageByPathAndName(childPath, "testPage");
+        PageInDIR findUnit = dirRepository.findPageByPathAndName(childPath, "testPage")
+                .orElseThrow(() -> new NotFoundException("페이지를 찾을 수 없습니다."));
 
         assertThat(findUnit).isEqualTo(createPageInDIR);
     }
 
     @Test
     public void findDIR() {
-        DIR findDIR = dirRepository.findDIRByPathAndName("/root/", "testDIR");
+        DIR findDIR = dirRepository.findDIRByPathAndName("/root/", "testDIR")
+                .orElseThrow(() -> new NotFoundException("디렉토리를 찾을 수 없습니다."));
 
         assertThat(findDIR).isEqualTo(dir);
     }

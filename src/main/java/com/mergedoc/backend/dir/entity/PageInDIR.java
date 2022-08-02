@@ -22,10 +22,6 @@ public class PageInDIR extends InDIR{
 
 //    Page Entity 추가 후 연관관계 추가
 
-    public void setDIR(DIR dir) {
-        this.dir = dir;
-    }
-
     @Builder
     public PageInDIR(DIR dir) {
         this.dir = dir;

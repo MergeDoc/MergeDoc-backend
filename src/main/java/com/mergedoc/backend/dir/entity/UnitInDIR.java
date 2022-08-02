@@ -24,10 +24,6 @@ public class UnitInDIR extends InDIR{
 //    Unit Entity 추가 후 연관관계 추가
 
 
-    public void setDir(DIR dir) {
-        this.dir = dir;
-    }
-
     @Builder
     public UnitInDIR(DIR dir) {
         this.dir = dir;

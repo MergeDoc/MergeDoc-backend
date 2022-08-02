@@ -11,6 +11,7 @@ import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -42,12 +43,13 @@ public class DIRRepository {
                 .getResultList();
     }
 
-    public DIR findDIRByPathAndName(String path, String name) {
+    public Optional<DIR> findDIRByPathAndName(String path, String name) {
         return em.createQuery("select d from DIR d where " +
                         "d.path = :path and d.name = :name", DIR.class)
                 .setParameter("path", path)
                 .setParameter("name", name)
-                .getSingleResult();
+                .getResultList()
+                .stream().findFirst();
     }
 
 
@@ -57,12 +59,13 @@ public class DIRRepository {
                 .getResultList();
     }
 
-    public UnitInDIR findUnitByPathAndName(String path, String name) {
+    public Optional<UnitInDIR> findUnitByPathAndName(String path, String name) {
         return em.createQuery("select u from UnitInDIR u where " +
                         "u.path = :path and u.name = :name", UnitInDIR.class)
                 .setParameter("path", path)
                 .setParameter("name", name)
-                .getSingleResult();
+                .getResultList()
+                .stream().findFirst();
     }
 
     public List<PageInDIR> findPagesByPath(String path) {
@@ -71,11 +74,13 @@ public class DIRRepository {
                 .getResultList();
     }
 
-    public PageInDIR findPageByPathAndName(String path, String name) {
+    public Optional<PageInDIR> findPageByPathAndName(String path, String name) {
         return em.createQuery("select p from PageInDIR p where " +
                         "p.path = :path and p.name = :name", PageInDIR.class)
                 .setParameter("path", path)
                 .setParameter("name", name)
-                .getSingleResult();
+                .getResultList()
+                .stream().findFirst();
     }
+
 }
