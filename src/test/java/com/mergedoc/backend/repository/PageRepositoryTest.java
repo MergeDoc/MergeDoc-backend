@@ -57,11 +57,4 @@ public class PageRepositoryTest {
 
         assertThat(findPageUnit.get(0)).isEqualTo(pageUnit);
     }
-
-    @Test
-    public void changePageName() {
-        pageRepository.changePageName(page, "sample_page2");
-
-        assertThat(page.getName()).isNotEqualTo("sample_page");
-    }
 }

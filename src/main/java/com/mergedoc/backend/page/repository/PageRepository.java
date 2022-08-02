@@ -22,10 +22,6 @@ public class PageRepository {
 
     public void deletePageUnit(PageUnit pageUnit) {em.remove(pageUnit);}
 
-    public void changePageName(Page page, String name) {
-        page.changeName(name);
-    }
-
     public Page findPageById(Long id) {return em.find(Page.class, id);}
 
     public List<PageUnit> findPageUnitsByPage(Page page) {

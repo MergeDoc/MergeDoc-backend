@@ -20,10 +20,6 @@ public class Page extends BaseEntity{
 
     private String name;
 
-    public void changeName(String changeName) {
-        this.name = changeName;
-    }
-
     @Builder
     public Page(String name) {
         this.name = name;
