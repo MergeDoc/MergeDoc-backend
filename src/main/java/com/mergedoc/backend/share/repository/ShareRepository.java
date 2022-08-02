@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -16,11 +17,12 @@ public class ShareRepository {
 
     public void saveSharedPage(SharedPage sharedPage) {em.persist(sharedPage);}
 
-    public SharedPage findSharedPageByURL(String findURL) {
+    public Optional<SharedPage> findSharedPageByURL(String findURL) {
         return em.createQuery("select s from SharedPage s " +
                 "where s.url = :url", SharedPage.class)
                 .setParameter("url", findURL)
-                .getSingleResult();
+                .getResultList()
+                .stream().findFirst();
     }
 
     public void deleteSharedPage(String deleteURL) {

@@ -1,5 +1,6 @@
 package com.mergedoc.backend.repository;
 
+import com.mergedoc.backend.exceptions.NotFoundException;
 import com.mergedoc.backend.page.entity.Page;
 import com.mergedoc.backend.share.entity.SharedPage;
 import com.mergedoc.backend.share.repository.ShareRepository;
@@ -39,7 +40,8 @@ public class ShareRepositoryTest {
 
         shareRepository.saveSharedPage(sharedPage);
 
-        SharedPage findPage = shareRepository.findSharedPageByURL(url);
+        SharedPage findPage = shareRepository.findSharedPageByURL(url)
+                .orElseThrow(() -> new NotFoundException("공유 페이지를 찾을 수 없습니다."));
 
         assertThat(findPage).isEqualTo(sharedPage);
     }
