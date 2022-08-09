@@ -1,6 +1,7 @@
 package com.mergedoc.backend.dir.entity;
 
 import com.mergedoc.backend.Base.BaseEntity;
+import com.mergedoc.backend.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,9 +24,16 @@ public class UnitInDIR extends InDIR{
 
 //    Unit Entity 추가 후 연관관계 추가
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
 
     @Builder
-    public UnitInDIR(DIR dir) {
+    public UnitInDIR(DIR dir, Member member, String path, String name) {
         this.dir = dir;
+        this.member = member;
+        this.setName(name);
+        this.setPath(path);
     }
 }
