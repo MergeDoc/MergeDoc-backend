@@ -19,68 +19,97 @@ public class DIRRepository {
 
     private final EntityManager em;
 
-    public void saveDIR(DIR dir) {
-        em.persist(dir);
-    }
+    public void saveDIR(DIR dir) {em.persist(dir);}
     public void saveUnitInDIR(UnitInDIR unitInDIR) {em.persist(unitInDIR);}
     public void savePageInDIR(PageInDIR pageInDir) {
         em.persist(pageInDir);
     }
 
-    public List<InDIR> findAllByPath(String path) {
-        List<InDIR> findFiles = new ArrayList<>();
+    public DIR findDIRById(Long id) { return em.find(DIR.class, id); }
+    public PageInDIR findPageById(Long id) { return em.find(PageInDIR.class, id); }
+    public UnitInDIR findUnitById(Long id) { return em.find(UnitInDIR.class, id); }
 
-        findFiles.addAll(findDIRsByPath(path));
-        findFiles.addAll(findPagesByPath(path));
-        findFiles.addAll(findUnitsByPath(path));
-
-        return findFiles;
+    public List<DIR> findDIRsInDIR(Long id) {
+        return em.createQuery("select d from DIR d " +
+                "where d.parent = :id" ,DIR.class)
+                .setParameter("id", id)
+                .getResultList();
+    }
+    public List<PageInDIR> findPagesInDIR(Long id) {
+        return em.createQuery("select p from PageInDIR p " +
+                        "where p.dir.id = :id" ,PageInDIR.class)
+                .setParameter("id", id)
+                .getResultList();
     }
 
-    public List<DIR> findDIRsByPath(String path) {
-        return em.createQuery("select d from DIR d where d.path = :path", DIR.class)
+    public List<UnitInDIR> findUnitsInDIR(Long id) {
+        return em.createQuery("select u from UnitInDIR u " +
+                        "where u.dir.id = :id" ,UnitInDIR.class)
+                .setParameter("id", id)
+                .getResultList();
+    }
+
+    public List<InDIR> findAllMemberFileByPath(Long memberId, String path) {
+        List<InDIR> result = new ArrayList<>();
+
+        result.addAll(findAllMemberDIRsByPath(memberId, path));
+        result.addAll(findAllMemberPagesByPath(memberId, path));
+        result.addAll(findAllMemberUnitsByPath(memberId, path));
+
+        return result;
+    }
+
+    public List<DIR> findAllMemberDIRsByPath(Long memberId, String path) {
+        return em.createQuery("select d from DIR  d " +
+                "where d.member.id = :memberId and d.path = :path", DIR.class)
+                .setParameter("memberId", memberId)
                 .setParameter("path", path)
                 .getResultList();
     }
 
-    public Optional<DIR> findDIRByPathAndName(String path, String name) {
-        return em.createQuery("select d from DIR d where " +
-                        "d.path = :path and d.name = :name", DIR.class)
-                .setParameter("path", path)
-                .setParameter("name", name)
-                .getResultList()
-                .stream().findFirst();
-    }
-
-
-    public List<UnitInDIR> findUnitsByPath(String path) {
-        return em.createQuery("select u from UnitInDIR u where u.path = :path", UnitInDIR.class)
+    public List<PageInDIR> findAllMemberPagesByPath(Long memberId, String path) {
+        return em.createQuery("select p from PageInDIR  p " +
+                        "where p.member.id = :memberId and p.path = :path", PageInDIR.class)
+                .setParameter("memberId", memberId)
                 .setParameter("path", path)
                 .getResultList();
     }
 
-    public Optional<UnitInDIR> findUnitByPathAndName(String path, String name) {
-        return em.createQuery("select u from UnitInDIR u where " +
-                        "u.path = :path and u.name = :name", UnitInDIR.class)
-                .setParameter("path", path)
-                .setParameter("name", name)
-                .getResultList()
-                .stream().findFirst();
-    }
-
-    public List<PageInDIR> findPagesByPath(String path) {
-        return em.createQuery("select p from PageInDIR p where p.path = :path", PageInDIR.class)
+    public List<UnitInDIR> findAllMemberUnitsByPath(Long memberId, String path) {
+        return em.createQuery("select u from UnitInDIR  u " +
+                        "where u.member.id = :memberId and u.path = :path", UnitInDIR.class)
+                .setParameter("memberId", memberId)
                 .setParameter("path", path)
                 .getResultList();
     }
 
-    public Optional<PageInDIR> findPageByPathAndName(String path, String name) {
-        return em.createQuery("select p from PageInDIR p where " +
-                        "p.path = :path and p.name = :name", PageInDIR.class)
+    public Optional<DIR> findMemberDIRByPathName(Long memberId, String path, String name) {
+        return em.createQuery("select d from DIR  d " +
+                        "where d.member.id = :memberId and d.path = :path and d.name = :name", DIR.class)
+                .setParameter("memberId", memberId)
                 .setParameter("path", path)
                 .setParameter("name", name)
-                .getResultList()
-                .stream().findFirst();
+                .getResultList().stream()
+                .findFirst();
     }
 
+    public Optional<PageInDIR> findMemberPageByPathName(Long memberId, String path, String name) {
+        return em.createQuery("select p from PageInDIR  p " +
+                        "where p.member.id = :memberId and p.path = :path and p.name = :name", PageInDIR.class)
+                .setParameter("memberId", memberId)
+                .setParameter("path", path)
+                .setParameter("name", name)
+                .getResultList().stream()
+                .findFirst();
+    }
+
+    public Optional<UnitInDIR> findMemberUnitByPathName(Long memberId, String path, String name) {
+        return em.createQuery("select u from UnitInDIR  u " +
+                        "where u.member.id = :memberId and u.path = :path and u.name = :name", UnitInDIR.class)
+                .setParameter("memberId", memberId)
+                .setParameter("path", path)
+                .setParameter("name", name)
+                .getResultList().stream()
+                .findFirst();
+    }
 }

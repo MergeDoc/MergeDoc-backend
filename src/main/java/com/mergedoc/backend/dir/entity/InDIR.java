@@ -11,10 +11,10 @@ public abstract class InDIR extends BaseEntity {
     private String path;
     private String name;
 
-    public void setPath(String path) {
+    protected void setPath(String path) {
         this.path = path;
     }
-    public void setName(String name) {
+    protected void setName(String name) {
         this.name = name;
     }
 }
