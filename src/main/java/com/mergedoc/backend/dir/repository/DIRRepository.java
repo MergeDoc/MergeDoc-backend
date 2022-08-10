@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,32 +28,52 @@ public class DIRRepository {
     public PageInDIR findPageById(Long id) { return em.find(PageInDIR.class, id); }
     public UnitInDIR findUnitById(Long id) { return em.find(UnitInDIR.class, id); }
 
-    public List<DIR> findDIRsInDIR(Long id) {
+    public List<DIR> findDIRsInDIR(Long dirId) {
         return em.createQuery("select d from DIR d " +
-                "where d.parent = :id" ,DIR.class)
-                .setParameter("id", id)
+                "where d.dir.id = :id" ,DIR.class)
+                .setParameter("id", dirId)
                 .getResultList();
     }
-    public List<PageInDIR> findPagesInDIR(Long id) {
+    public List<PageInDIR> findPagesInDIR(Long dirId) {
         return em.createQuery("select p from PageInDIR p " +
                         "where p.dir.id = :id" ,PageInDIR.class)
-                .setParameter("id", id)
+                .setParameter("id", dirId)
                 .getResultList();
     }
 
-    public List<UnitInDIR> findUnitsInDIR(Long id) {
+    public List<UnitInDIR> findUnitsInDIR(Long dirId) {
         return em.createQuery("select u from UnitInDIR u " +
                         "where u.dir.id = :id" ,UnitInDIR.class)
-                .setParameter("id", id)
+                .setParameter("id", dirId)
                 .getResultList();
     }
 
-    public List<InDIR> findAllMemberFileByPath(Long memberId, String path) {
+    public boolean dirExistsInDirByName(Long dirId, String name) {
+        return em.createQuery("select count(d) > 0 from DIR d " +
+                "where d.dir.id = :dirId and d.name = :name", Boolean.class)
+                .setParameter("dirId", dirId)
+                .setParameter("name", name)
+                .getSingleResult();
+    }
+
+    public boolean pageExistsInDirByName(Long dirId, String name) {
+        return em.createQuery("select count(p) > 0 from PageInDIR p " +
+                        "where p.dir.id = :dirId and p.name = :name", Boolean.class)
+                .setParameter("dirId", dirId)
+                .setParameter("name", name)
+                .getSingleResult();
+    }
+
+
+
+
+
+    public List<InDIR> findMemberFilesByPath(Long memberId, String path) {
         List<InDIR> result = new ArrayList<>();
 
         result.addAll(findAllMemberDIRsByPath(memberId, path));
-        result.addAll(findAllMemberPagesByPath(memberId, path));
-        result.addAll(findAllMemberUnitsByPath(memberId, path));
+        result.addAll(findMemberPagesByPath(memberId, path));
+        result.addAll(findMemberUnitsByPath(memberId, path));
 
         return result;
     }
@@ -67,7 +86,7 @@ public class DIRRepository {
                 .getResultList();
     }
 
-    public List<PageInDIR> findAllMemberPagesByPath(Long memberId, String path) {
+    public List<PageInDIR> findMemberPagesByPath(Long memberId, String path) {
         return em.createQuery("select p from PageInDIR  p " +
                         "where p.member.id = :memberId and p.path = :path", PageInDIR.class)
                 .setParameter("memberId", memberId)
@@ -75,7 +94,7 @@ public class DIRRepository {
                 .getResultList();
     }
 
-    public List<UnitInDIR> findAllMemberUnitsByPath(Long memberId, String path) {
+    public List<UnitInDIR> findMemberUnitsByPath(Long memberId, String path) {
         return em.createQuery("select u from UnitInDIR  u " +
                         "where u.member.id = :memberId and u.path = :path", UnitInDIR.class)
                 .setParameter("memberId", memberId)
@@ -83,7 +102,7 @@ public class DIRRepository {
                 .getResultList();
     }
 
-    public Optional<DIR> findMemberDIRByPathName(Long memberId, String path, String name) {
+    public Optional<DIR> findMemberDIRByPathAndName(Long memberId, String path, String name) {
         return em.createQuery("select d from DIR  d " +
                         "where d.member.id = :memberId and d.path = :path and d.name = :name", DIR.class)
                 .setParameter("memberId", memberId)
@@ -93,7 +112,7 @@ public class DIRRepository {
                 .findFirst();
     }
 
-    public Optional<PageInDIR> findMemberPageByPathName(Long memberId, String path, String name) {
+    public Optional<PageInDIR> findMemberPageByPathAndName(Long memberId, String path, String name) {
         return em.createQuery("select p from PageInDIR  p " +
                         "where p.member.id = :memberId and p.path = :path and p.name = :name", PageInDIR.class)
                 .setParameter("memberId", memberId)
@@ -103,7 +122,7 @@ public class DIRRepository {
                 .findFirst();
     }
 
-    public Optional<UnitInDIR> findMemberUnitByPathName(Long memberId, String path, String name) {
+    public Optional<UnitInDIR> findMemberUnitByPathAndName(Long memberId, String path, String name) {
         return em.createQuery("select u from UnitInDIR  u " +
                         "where u.member.id = :memberId and u.path = :path and u.name = :name", UnitInDIR.class)
                 .setParameter("memberId", memberId)
