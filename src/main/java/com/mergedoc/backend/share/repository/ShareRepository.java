@@ -19,7 +19,7 @@ public class ShareRepository {
 
     public Optional<SharedPage> findSharedPageByURL(String findURL) {
         return em.createQuery("select s from SharedPage s " +
-                "where s.url = :url", SharedPage.class)
+                "left outer join Page p on s.page = p where s.url = :url", SharedPage.class)
                 .setParameter("url", findURL)
                 .getResultList()
                 .stream().findFirst();

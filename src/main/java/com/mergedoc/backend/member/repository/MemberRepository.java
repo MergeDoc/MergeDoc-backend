@@ -32,4 +32,18 @@ public class MemberRepository {
                 .getResultList().stream()
                 .findFirst();
     }
+
+    public boolean existsByName(String username) {
+        return em.createQuery("select count(m)>0 from Member m " +
+                "where m.username = :name", Boolean.class)
+                .setParameter("name", username)
+                .getSingleResult();
+    }
+
+    public boolean existsByEmail(String email) {
+        return em.createQuery("select count(m)>0 from Member m " +
+                        "where m.email = :email", Boolean.class)
+                .setParameter("email", email)
+                .getSingleResult();
+    }
 }

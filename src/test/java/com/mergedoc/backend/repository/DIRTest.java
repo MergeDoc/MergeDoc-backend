@@ -4,10 +4,9 @@ import com.mergedoc.backend.dir.entity.DIR;
 import com.mergedoc.backend.dir.entity.PageInDIR;
 import com.mergedoc.backend.dir.entity.UnitInDIR;
 import com.mergedoc.backend.dir.repository.DIRRepository;
-import com.mergedoc.backend.exceptions.NotFoundException;
+import com.mergedoc.backend.exception.NotFoundException;
 import com.mergedoc.backend.member.entity.Member;
 import com.mergedoc.backend.member.repository.MemberRepository;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,7 @@ public class DIRTest {
 
         String createName = "testDIR";
 
-        DIR parentDIR = dirRepository.findMemberDIRByPathName(member.getId(), rootPath, rootName)
+        DIR parentDIR = dirRepository.findMemberDIRByPathAndName(member.getId(), rootPath, rootName)
                 .orElseThrow(() -> new NotFoundException("디렉토리를 찾을 수 없습니다."));
 
         DIR createdDIR = DIR.builder()
@@ -68,7 +67,7 @@ public class DIRTest {
 
     @Test
     public void findUnit() {
-        DIR parentDIR = dirRepository.findMemberDIRByPathName(member.getId(), rootPath, rootName)
+        DIR parentDIR = dirRepository.findMemberDIRByPathAndName(member.getId(), rootPath, rootName)
                 .orElseThrow(() -> new NotFoundException("디렉토리를 찾을 수 없습니다."));
 
         String childPath = rootPath+rootName+"/";
@@ -84,7 +83,7 @@ public class DIRTest {
 
         dirRepository.saveUnitInDIR(createUnitInDIR);
 
-        UnitInDIR findUnit = dirRepository.findMemberUnitByPathName(member.getId(), childPath, "testUnit")
+        UnitInDIR findUnit = dirRepository.findMemberUnitByPathAndName(member.getId(), childPath, "testUnit")
                 .orElseThrow(() -> new NotFoundException("유닛을 찾을 수 없습니다."));
 
         assertThat(findUnit).isEqualTo(createUnitInDIR);
@@ -92,7 +91,7 @@ public class DIRTest {
 
     @Test
     public void findPage() {
-        DIR parentDIR = dirRepository.findMemberDIRByPathName(member.getId(), rootPath, rootName)
+        DIR parentDIR = dirRepository.findMemberDIRByPathAndName(member.getId(), rootPath, rootName)
                 .orElseThrow(() -> new NotFoundException("디렉토리를 찾을 수 없습니다."));
 
         String childPath = rootPath+rootName+"/";
@@ -108,7 +107,7 @@ public class DIRTest {
 
         dirRepository.savePageInDIR(createPageInDIR);
 
-        PageInDIR findUnit = dirRepository.findMemberPageByPathName(member.getId(), childPath, "testPage")
+        PageInDIR findUnit = dirRepository.findMemberPageByPathAndName(member.getId(), childPath, "testPage")
                 .orElseThrow(() -> new NotFoundException("페이지를 찾을 수 없습니다."));
 
         assertThat(findUnit).isEqualTo(createPageInDIR);
@@ -116,7 +115,7 @@ public class DIRTest {
 
     @Test
     public void findRootFiles() {
-        DIR findDIR = dirRepository.findMemberDIRByPathName(member.getId(), rootPath, rootName)
+        DIR findDIR = dirRepository.findMemberDIRByPathAndName(member.getId(), rootPath, rootName)
                 .orElseThrow(() -> new NotFoundException("디렉토리를 찾을 수 없습니다."));
 
         String childPath = rootPath+rootName+"/";
@@ -143,8 +142,8 @@ public class DIRTest {
             dirRepository.saveUnitInDIR(createUnit);
         });
 
-        List<PageInDIR> findPages = dirRepository.findAllMemberPagesByPath(member.getId(), childPath);
-        List<UnitInDIR> findUnits = dirRepository.findAllMemberUnitsByPath(member.getId(), childPath);
+        List<PageInDIR> findPages = dirRepository.findMemberPagesByPath(member.getId(), childPath);
+        List<UnitInDIR> findUnits = dirRepository.findMemberUnitsByPath(member.getId(), childPath);
 
         for (PageInDIR inDIR : findPages) {
             System.out.println(inDIR.getName());

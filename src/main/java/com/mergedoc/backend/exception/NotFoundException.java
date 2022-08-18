@@ -1,4 +1,4 @@
-package com.mergedoc.backend.exceptions;
+package com.mergedoc.backend.exception;
 
 
 public class NotFoundException extends RuntimeException{

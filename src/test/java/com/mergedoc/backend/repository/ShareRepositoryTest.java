@@ -1,7 +1,6 @@
 package com.mergedoc.backend.repository;
 
-import com.mergedoc.backend.exceptions.NotFoundException;
-import com.mergedoc.backend.page.entity.Page;
+import com.mergedoc.backend.exception.NotFoundException;
 import com.mergedoc.backend.share.entity.SharedPage;
 import com.mergedoc.backend.share.repository.ShareRepository;
 import com.mergedoc.backend.share.util.URLGenerator;

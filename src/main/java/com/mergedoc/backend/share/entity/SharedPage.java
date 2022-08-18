@@ -2,6 +2,7 @@ package com.mergedoc.backend.share.entity;
 
 import com.mergedoc.backend.Base.BaseEntity;
 
+import com.mergedoc.backend.member.entity.Member;
 import com.mergedoc.backend.page.entity.Page;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -30,13 +31,16 @@ public class SharedPage extends BaseEntity {
     @JoinColumn(name = "page_id")
     private Page page;
 
-//    Member entity 추가 후 연관관계 추가
+    @OneToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     @Builder
-    public SharedPage(String name, String url, LocalDateTime expiredDate, Page page) {
+    public SharedPage(String name, String url, LocalDateTime expiredDate, Page page, Member member) {
         this.name = name;
         this.url = url;
         this.expiredDate = expiredDate;
         this.page = page;
+        this.member = member;
     }
 }
