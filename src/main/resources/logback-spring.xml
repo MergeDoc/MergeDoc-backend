@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 10초마다 로그 설정의 변화를 스캔하여 적용 -->
+<configuration scan="true" scanPeriod="10 seconds">
+    <!-- springProfile 태그를 사용하면 logback 설정파일에서 복수개의 프로파일을 설정할 수 있음 -->
+    <springProfile name="local">
+        <property resource="application.properties"/>
+    </springProfile>
+
+
+    <!-- 로그 파일 패턴 -->
+    <property name ="CONSOLE_LOG_PATTERN" value = "%d{yyyy-MM-dd HH:mm:ss.SSS} %magenta([traceId=%X{traceId}]) %highlight(%-5level) %logger{36}.%M - %msg%n"/>
+    <property name ="LOG_PATTERN" value = "%d{HH:mm:ss.SSS} [tid=%X{traceId}] [%-5level] - %msg%n"/>
+    <!-- 로그 파일 경로 -->
+    <property name="LOG_PATH" value="${log.config.path}"/>
+    <!-- 로그 파일 이름 -->
+    <property name="LOG_FILE_NAME" value="${log.config.filename}"/>
+
+
+    <!-- 콘솔 Appender 설정 -->
+    <appender name="CONSOLE_LOG" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 파일 Appender 설정 -->
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <file>${LOG_PATH}/${LOG_FILE_NAME}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_PATH}/${LOG_FILE_NAME}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- 로그 파일이 100MB 초과 시 Rollover-->
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <!-- 로그파일 최대 보관 주기 -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <!-- 로깅 패턴 설정 -->
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 루트로거(콘솔 출력) -->
+    <root level="debug" additivity="false">
+        <appender-ref ref="CONSOLE_LOG"/>
+    </root>
+
+
+    <!-- user-specified 로거 -->
+    <!--
+        요구사항: 요청 URL, Method
+        예외 터지면 내용 (e.printstacktrace 전체 아니여도 되고, 어떤 클래스에서 터진지 정보)
+    -->
+
+    <!-- HTTP Req/Res 로깅 -->
+    <root level="DEBUG" additivity="false">
+        <appender-ref ref="ROLLING"/>
+    </root>
+<!--    <logger name="com.mergedoc.backend" level="error" additivity="false">-->
+<!--        <appender-ref ref="ROLLING"/>-->
+<!--    </logger>-->
+</configuration>
